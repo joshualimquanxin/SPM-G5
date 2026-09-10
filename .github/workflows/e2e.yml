@@ -34,6 +34,22 @@ jobs:
     needs: [detect-changes]
     if: always() && (github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.changed == 'true')
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: connectsphere
+          POSTGRES_PASSWORD: connectsphere
+          POSTGRES_DB: connectsphere
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U connectsphere"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://connectsphere:connectsphere@localhost:5433/connectsphere
     steps:
       - uses: actions/checkout@v4
 
@@ -46,6 +62,10 @@ jobs:
       - name: Install backend dependencies
         working-directory: backend
         run: uv sync
+
+      - name: Migrate and seed the database
+        working-directory: backend
+        run: uv run python -m app.dbtool ready --no-docs
 
       - name: Start backend
         working-directory: backend
