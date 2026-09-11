@@ -18,6 +18,13 @@ dev = [
     "ruff>=0.7",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "story(id, ac=None): backlog story (and optional acceptance-criterion number) the test verifies",
+]
+filterwarnings = ["ignore::DeprecationWarning:starlette.testclient", "ignore::DeprecationWarning:fastapi.testclient"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"

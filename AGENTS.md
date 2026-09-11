@@ -40,8 +40,10 @@ npx playwright install --with-deps chromium
 ```
 
 Copy `backend/.env.sample` to `backend/.env` and `frontend/.env.sample` to `frontend/.env`,
-adjusting values as needed. A local PostgreSQL instance can be started with
-`docker compose up -d` from the repo root.
+adjusting values as needed. `npm run poc` (repo root) installs missing tools and packages, starts
+PostgreSQL in Docker on host port **5433**, migrates + seeds it, then starts both servers.
+Database-only: `npm run db:ready`. Root npm scripts call uv through `scripts/uv.mjs`, which
+locates or installs uv, so use that wrapper in any new root script too.
 
 ### Run (two terminals)
 
@@ -83,20 +85,54 @@ npm test
 Run the relevant lint/test commands for whatever you touched before opening a PR — CI will
 also run them, but don't rely on CI to catch what you could catch locally.
 
+## Database & Auth Conventions
+
+- Schema = plain SQL in `backend/db/migrations/` (source of truth), applied by
+  `python -m app.dbtool` (`npm run db:*`). Every table/column has a `COMMENT ON`; the data
+  dictionary and ERD in `docs/database/` are **generated** from them (`npm run db:docs`) -
+  never edit those two files by hand.
+- Sprint 1: `001_initial_schema.sql` may be edited in place, then `npm run db:reset`. Later
+  sprints: add `NNN_*.sql`, never edit applied files. Full rules: `docs/database/README.md`.
+- Seed files are idempotent upserts with fixed UUIDs; mirror rows tests use in
+  `backend/tests/support/seed.py`.
+- Statuses are `text` + named `CHECK` constraints, not ENUMs. Lists (facilities, layouts,
+  accessibility features, equipment types, roles) are reference tables seeded from
+  `backend/db/seed/010_reference_data.sql`.
+- Each feature's SQLAlchemy models live in `app/<feature>/models.py` and must match the SQL
+  (`tests/test_schema.py::test_orm_models_match_database` enforces it).
+- Auth: cookie sessions (`app/auth`), `CurrentUser` dependency for "signed in",
+  `require_permission(Permission.X)` for role checks. Add new permissions to
+  `app/auth/permissions.py`; relationship rules ("only my events") go in the feature service.
+- Tests: one file per story under `backend/tests/<feature>/`, every test tagged
+  `@pytest.mark.story("<id>", ac=<n>)`; `npm run test:trace` produces the traceability matrix.
+
 ## Repository Structure
 
 ```text
 backend/
-  app/                  # FastAPI app source, structured by feature as stories are added
-  tests/                # backend tests, mirrors the app's feature layout
+  app/
+    auth/               # login/logout, sessions, permission matrix (stories 1.1, 1.2)
+    venues/             # venue catalogue (stories 8.x)
+    common/             # cross-cutting helpers (audit log)
+    dbtool/             # migrate / seed / reset / ready / docs
+    <feature>/          # router.py, service.py, schemas.py, models.py per feature area
+  db/
+    migrations/         # NNN_*.sql schema, applied once in order
+    seed/               # idempotent reference + sample data
+  tests/                # mirrors app/ by feature; support/ has seed constants + factories
   pyproject.toml
 frontend/
   src/
-    <pages/components>    # one file per feature area, added as stories are picked up
-    api/                   # calls to the backend
-tests/                  # e2e tests, separate from backend/frontend
+    api/                # one <feature>.ts per backend feature + client.ts
+    auth/               # AuthProvider, route guards, LoginPage
+    layout/             # AppLayout (header + permission-filtered nav)
+    <feature>/          # pages for one feature area
+tests/                  # Playwright e2e specs, separate from backend/frontend
+scripts/                # repo-root Node helpers: poc.mjs (npm run poc), uv.mjs (uv wrapper)
 docs/
   ARCHITECTURE.md
+  database/             # README + generated DATA_DICTIONARY.md and ERD.excalidraw
+  testing/              # README + generated TRACEABILITY.md
 AGENTS.md
 CONTRIBUTING.md
 README.md
