@@ -5,8 +5,9 @@ React 19 + TypeScript SPA built with Vite. Setup, branching and Definition of Do
 from reading the code.
 
 **Removed paths.** Sprint 1 is backend-only, so the story 8.3 venue pages were removed:
-`src/venues/` and `src/api/venues.ts` _(paths since deleted)_. Anything below that points at them
-is a dead anchor; read the code at commit `6db5a5b`, for example
+`src/venues/` and `src/api/venues.ts` _(paths since deleted)_. Story 1.2's role-based UI went
+too: `RequirePermission`, `can()` and the permission-filtered nav _(since deleted)_. Anything
+below that points at them is a dead anchor; read the code at commit `6db5a5b`, for example
 `git show 6db5a5b:frontend/src/venues/VenueManagePage.tsx`.
 
 **Before writing or reviewing code in `frontend/`, read [STYLE.md](STYLE.md)** — the graded
@@ -53,7 +54,7 @@ Pydantic schema, so `backend/app/` is the reference. The two that matter:
 - `CurrentUser` (`src/api/auth.ts`) mirrors `UserOut`, and carries `permissions: string[]`.
 - `Venue` / `VenueSummary` (`src/api/venues.ts` _(path since deleted)_) mirrored the venue schemas.
 
-Permission codes are compared as plain strings against
+When a page is gated on a permission again, the code is compared as a plain string against
 `backend/app/auth/permissions.py`, so a renamed code fails **silently** — no type error, the nav
 link simply stops appearing. Grep both sides when changing one.
 
@@ -64,8 +65,8 @@ link simply stops appearing. Grep both sides when changing one.
 | `src/api/<feature>.ts`     | Types mirroring backend schemas, and one function per endpoint       | `./client` only                           |
 | `src/api/client.ts`        | The single `fetch` wrapper: `api<T>()`, `ApiError`, `formatApiError` | nothing                                   |
 | `src/<feature>/`           | Pages for one feature area, e.g. `src/venues/` _(since deleted)_     | `../api/<feature>`, `../auth/authContext` |
-| `src/auth/`                | `AuthProvider`, `authContext`, route guards, `LoginPage`, `homeFor`  | `../api/auth`                             |
-| `src/layout/AppLayout.tsx` | Header and the permission-filtered nav                               | `../auth/authContext`                     |
+| `src/auth/`                | `AuthProvider`, `authContext`, `RequireAuth`, `LoginPage`, `homeFor` | `../api/auth`                             |
+| `src/layout/AppLayout.tsx` | Header and nav                                                       | `../auth/authContext`                     |
 | `src/pages/`               | Pages belonging to no feature area (`HomePage`)                      | anything above                            |
 | `src/App.tsx`              | The route map                                                        | everything                                |
 
@@ -83,9 +84,9 @@ Tailwind, no styled-components.
 
 ### Permission checks here are UX, not security
 
-`RequirePermission` and the `NAV_ITEMS` filter exist so a role does not see doors it cannot
-open (story 1.2 AC2/AC4). The backend independently rejects every unpermitted call. Never treat
-a frontend check as the thing that protects data.
+`RequirePermission` and the `NAV_ITEMS` filter _(since deleted)_ existed so a role did not see
+doors it could not open (story 1.2 AC2/AC4). The backend independently rejects every unpermitted
+call. Never treat a frontend check as the thing that protects data.
 
 ## Do not
 
@@ -98,7 +99,8 @@ a frontend check as the thing that protects data.
 - Do not add a unit test runner without team agreement.
 - Do not use default exports for components — `App.tsx` is the single exception.
 - Do not add barrel `index.ts` files.
-- Do not gate anything on `role_code`; gate on a permission string via `can()`.
+- Do not gate anything on `role_code`; gate on a permission string, as `can()` _(since deleted)_
+  did.
 
 ## Feature dev workflow
 
@@ -109,9 +111,9 @@ Adding `<feature>` end to end, after the backend endpoints exist:
    it mirrors, the way `src/api/auth.ts:3` does.
 2. `src/<feature>/<Name>Page.tsx` — named export. Loading, empty, and error states all rendered;
    errors through `formatApiError` into `<p role="alert" className="error">`.
-3. `src/App.tsx` — add the route inside `<RequireAuth>` / `<AppLayout>`, wrapped in
-   `<RequirePermission permission="…" />` when the feature is role-restricted.
-4. `src/layout/AppLayout.tsx` — add a `NAV_ITEMS` entry with its permission code.
+3. `src/App.tsx` — add the route inside `<RequireAuth>` / `<AppLayout>`, behind a permission
+   guard when the feature is role-restricted (`RequirePermission` _(since deleted)_ was the model).
+4. `src/layout/AppLayout.tsx` — add a `NAV_ITEMS` entry, hidden from roles without its permission.
 5. `src/auth/homeFor.ts` — only if a role should land on this page after login.
 6. `src/App.css` — any new class names, following the existing flat naming.
 7. `tests/e2e/<feature>.spec.ts` — in the `tests/` subsystem, since nothing here runs tests.

@@ -5,8 +5,9 @@ document only contains things Claude would get wrong without being told: not sta
 TypeScript conventions, and not patterns already covered in [CLAUDE.md](CLAUDE.md).
 
 **Removed paths.** Sprint 1 is backend-only, so the story 8.3 venue pages were removed:
-`src/venues/` and `src/api/venues.ts` _(paths since deleted)_. Anchors below that point at them
-are dead, and the counts still include them; read the code at commit `6db5a5b`.
+`src/venues/` and `src/api/venues.ts` _(paths since deleted)_, and with them story 1.2's
+`RequirePermission`, `can()` and permission-filtered nav _(since deleted)_. Anchors below that
+point at them are dead, and the counts still include them; read the code at commit `6db5a5b`.
 
 **What these rules are for.** One idea sits under nearly all of them: _a reader should not have
 to open the function body, or another file, to know what something does._ Names carry type and

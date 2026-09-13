@@ -8,8 +8,6 @@ export interface AuthContextValue {
   loading: boolean
   signIn: (email: string, password: string) => Promise<CurrentUser>
   signOut: () => Promise<void>
-  /** Story 1.2 AC2: hide navigation / actions the role may not perform. */
-  can: (permission: string) => boolean
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
