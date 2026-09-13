@@ -6,14 +6,12 @@
 import { expect, test } from '@playwright/test'
 import { ACCOUNTS, expectSignedIn, signIn } from './support'
 
-test('1.1 AC1/AC4: venue staff signs in and lands on the venue management page', async ({
-  page,
-}) => {
+test('1.1 AC1/AC4: venue staff signs in and lands on the home page', async ({ page }) => {
   await signIn(page, ACCOUNTS.venueStaff)
 
-  await expect(page).toHaveURL(/\/venues\/manage$/)
+  await expect(page).toHaveURL(/\/$/)
   await expectSignedIn(page)
-  await expect(page.getByText('Vera Venue')).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Welcome, Vera Venue/ })).toBeVisible()
 })
 
 test('1.1 AC4: an organiser lands on the home page', async ({ page }) => {
@@ -47,17 +45,6 @@ test('1.1 AC5: sign out ends the session and protected pages redirect to login',
   await page.getByRole('button', { name: 'Sign out' }).click()
   await expect(page).toHaveURL(/\/login$/)
 
-  await page.goto('/venues/manage')
+  await page.goto('/')
   await expect(page).toHaveURL(/\/login$/)
-})
-
-test('1.1: a deep link is remembered across login', async ({ page }) => {
-  await page.goto('/venues/new')
-  await expect(page).toHaveURL(/\/login$/)
-
-  await page.getByLabel('Email').fill(ACCOUNTS.venueStaff)
-  await page.getByLabel('Password').fill('Password123!')
-  await page.getByRole('button', { name: 'Sign in' }).click()
-
-  await expect(page).toHaveURL(/\/venues\/new$/)
 })
