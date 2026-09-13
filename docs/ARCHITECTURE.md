@@ -13,7 +13,7 @@ backed by PostgreSQL.
 
 - **Frontend** (`frontend/`): a React + TypeScript SPA built with Vite, routed with
   `react-router`. `src/App.tsx` is the route map; `src/auth/` holds the session context and
-  route guards; each feature area gets its own folder (`src/venues/`, ...) with its pages, and a
+  route guards; each feature area gets its own folder (`src/<feature>/`) with its pages, and a
   matching `src/api/<feature>.ts` for the calls it makes.
 - **Backend** (`backend/`): a FastAPI service structured **by feature area**
   (`app/auth/`, `app/venues/`, ...). Each area has `router.py` (HTTP), `service.py` (rules),
@@ -53,8 +53,8 @@ lists them.
 
 ## How a request flows (example: Venue Staff edits a venue)
 
-1. The browser calls `PATCH /venues/{id}` with the session cookie
-   (`frontend/src/api/venues.ts` -> `api/client.ts`, `credentials: 'include'`).
+1. A client calls `PATCH /venues/{id}` with the session cookie set by `POST /auth/login` (for
+   now Swagger UI at `/docs`, since Sprint 1 ships no venue pages).
 2. `app/auth/deps.py:get_current_user` resolves the cookie to a live row in `user_sessions`
    (rejects if missing, revoked or expired) -> 401.
 3. `require_permission(Permission.VENUES_MANAGE)` checks the user's role against the matrix in
@@ -63,7 +63,7 @@ lists them.
    capacity etc.) -> 422, then calls `app/venues/service.py:update_venue`.
 5. The service applies the change, checks cross-field rules, writes an `audit_log` row in the
    same transaction and commits. Uniqueness is enforced by the database (409 on conflict).
-6. The response is the full venue record; the frontend navigates back to the list.
+6. The response is the full venue record.
 
 Relationship-based rules ("an organiser sees only their own events") belong in the feature's
 service, next to the record they need - not in the permission matrix.

@@ -259,7 +259,7 @@ this tree's existing majority disagree, the tree wins — see [Standing divergen
   ```
 
   *`expected` · exemplars
-  `auth/router.py:19`, `auth/deps.py:33`, `:47`; asserted verbatim in `tests/e2e/auth.spec.ts:31`*
+  `auth/router.py:19`, `auth/deps.py:33`, `:47`; asserted verbatim in `tests/e2e/auth.spec.ts:29`*
 
 ## Traceability
 

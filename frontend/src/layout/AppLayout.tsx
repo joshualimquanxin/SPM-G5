@@ -12,10 +12,7 @@ interface NavItem {
  * Add a link here when you build a page. The permission code must exist in
  * backend/app/auth/permissions.py - the backend is the source of truth for who may do what.
  */
-const NAV_ITEMS: NavItem[] = [
-  { to: '/', label: 'Home' },
-  { to: '/venues/manage', label: 'Manage venues', permission: 'venues:manage' },
-]
+const NAV_ITEMS: NavItem[] = [{ to: '/', label: 'Home' }]
 
 export function AppLayout() {
   const { user, can, signOut } = useAuth()

@@ -15,7 +15,7 @@ conventions for this subsystem, and the note that nothing here is linted or form
 npm install
 npx playwright install --with-deps chromium   # chromium only; no other browser is configured
 npm test                                      # playwright test
-npm test -- e2e/venues.spec.ts                # one spec
+npm test -- e2e/auth.spec.ts                  # one spec
 npm test -- --headed --debug                  # watch it run
 ```
 
@@ -43,13 +43,13 @@ against a stopped stack every spec fails on navigation rather than reporting any
 `backend/tests/`, there is no per-test transaction and no rollback — anything a spec creates is
 still there afterwards, and `fullyParallel: true` means specs share that database concurrently.
 So give every created record a unique name (`E2E Room ${Date.now()}`, as
-`e2e/venues.spec.ts:9` does) and run `npm run db:reset` from the root to clear leftovers.
+`e2e/venues.spec.ts:9` did *(path since deleted)*) and run `npm run db:reset` from the root to clear leftovers.
 
 Accounts in `e2e/support.ts` are rows in `backend/db/seed/020_sample_data.sql`, which is also
 mirrored in `backend/tests/support/seed.py`. A seed change means editing all three.
 
 Traceability here is by **test title**, not by a marker: titles begin with the story and AC
-(`'1.2 AC2/AC4: organiser cannot see or open venue management'`). Only backend tests feed
+(`'1.1 AC2: unknown email shows exactly the same message'`). Only backend tests feed
 `docs/testing/TRACEABILITY.md`, via `@pytest.mark.story`.
 
 ## Do not

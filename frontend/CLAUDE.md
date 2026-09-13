@@ -4,6 +4,11 @@ React 19 + TypeScript SPA built with Vite. Setup, branching and Definition of Do
 [AGENTS.md](../AGENTS.md). This file holds only what is specific to `frontend/` and not obvious
 from reading the code.
 
+**Removed paths.** Sprint 1 is backend-only, so the story 8.3 venue pages were removed:
+`src/venues/` and `src/api/venues.ts` _(paths since deleted)_. Anything below that points at them
+is a dead anchor; read the code at commit `6db5a5b`, for example
+`git show 6db5a5b:frontend/src/venues/VenueManagePage.tsx`.
+
 **Before writing or reviewing code in `frontend/`, read [STYLE.md](STYLE.md)** — the graded
 coding rules for this subsystem, with the sites in this repo each one is anchored to.
 
@@ -46,7 +51,7 @@ The frontend owns no domain of its own — every type is a hand-written mirror o
 Pydantic schema, so `backend/app/` is the reference. The two that matter:
 
 - `CurrentUser` (`src/api/auth.ts`) mirrors `UserOut`, and carries `permissions: string[]`.
-- `Venue` / `VenueSummary` (`src/api/venues.ts`) mirror the venue schemas.
+- `Venue` / `VenueSummary` (`src/api/venues.ts` _(path since deleted)_) mirrored the venue schemas.
 
 Permission codes are compared as plain strings against
 `backend/app/auth/permissions.py`, so a renamed code fails **silently** — no type error, the nav
@@ -58,7 +63,7 @@ link simply stops appearing. Grep both sides when changing one.
 | -------------------------- | -------------------------------------------------------------------- | ----------------------------------------- |
 | `src/api/<feature>.ts`     | Types mirroring backend schemas, and one function per endpoint       | `./client` only                           |
 | `src/api/client.ts`        | The single `fetch` wrapper: `api<T>()`, `ApiError`, `formatApiError` | nothing                                   |
-| `src/<feature>/`           | Pages for one feature area, e.g. `src/venues/`                       | `../api/<feature>`, `../auth/authContext` |
+| `src/<feature>/`           | Pages for one feature area, e.g. `src/venues/` _(since deleted)_     | `../api/<feature>`, `../auth/authContext` |
 | `src/auth/`                | `AuthProvider`, `authContext`, route guards, `LoginPage`, `homeFor`  | `../api/auth`                             |
 | `src/layout/AppLayout.tsx` | Header and the permission-filtered nav                               | `../auth/authContext`                     |
 | `src/pages/`               | Pages belonging to no feature area (`HomePage`)                      | anything above                            |
@@ -68,7 +73,7 @@ Routing is **react-router v7**, imported from the `react-router` package — _no
 `react-router-dom`, which is not installed.
 
 State is plain React: `useState` + `useEffect`, with a `cancelled` flag in the cleanup so a slow
-response cannot set state after unmount (`VenueManagePage.tsx:13-25` is the pattern to copy).
+response cannot set state after unmount (`src/auth/AuthProvider.tsx:10-25` is the pattern to copy).
 Auth is the one piece of shared state, held in `AuthProvider` and read through `useAuth()`.
 There is no Redux, Zustand, TanStack Query or SWR, and adding one is a team decision.
 
