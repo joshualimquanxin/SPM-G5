@@ -13,7 +13,7 @@ backed by PostgreSQL.
 
 - **Frontend** (`frontend/`): a React + TypeScript SPA built with Vite, routed with
   `react-router`. `src/App.tsx` is the route map; `src/auth/` holds the session context and
-  the sign-in route guard; each feature area gets its own folder (`src/<feature>/`) with its pages, and a
+  route guards; each feature area gets its own folder (`src/<feature>/`) with its pages, and a
   matching `src/api/<feature>.ts` for the calls it makes.
 - **Backend** (`backend/`): a FastAPI service structured **by feature area**
   (`app/auth/`, `app/venues/`, ...). Each area has `router.py` (HTTP), `service.py` (rules),
