@@ -4,18 +4,13 @@ import { useAuth } from '../auth/authContext'
 interface NavItem {
   to: string
   label: string
-  /** Shown only when the user's role holds this permission (story 1.2 AC2). Omit = everyone. */
-  permission?: string
 }
 
-/**
- * Add a link here when you build a page. The permission code must exist in
- * backend/app/auth/permissions.py - the backend is the source of truth for who may do what.
- */
+/** Add a link here when you build a page. */
 const NAV_ITEMS: NavItem[] = [{ to: '/', label: 'Home' }]
 
 export function AppLayout() {
-  const { user, can, signOut } = useAuth()
+  const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
   async function handleSignOut() {
@@ -30,7 +25,7 @@ export function AppLayout() {
           ConnectSphere
         </NavLink>
         <nav aria-label="Main">
-          {NAV_ITEMS.filter((item) => !item.permission || can(item.permission)).map((item) => (
+          {NAV_ITEMS.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.to === '/'}>
               {item.label}
             </NavLink>

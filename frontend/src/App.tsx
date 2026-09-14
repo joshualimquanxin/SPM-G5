@@ -6,11 +6,7 @@ import { AppLayout } from './layout/AppLayout'
 import { HomePage } from './pages/HomePage'
 import './App.css'
 
-/**
- * Route map. Add a feature's routes under the guard that matches its permission - see
- * backend/app/auth/permissions.py for the codes. Pages inside <RequireAuth> render within
- * <AppLayout> (header + navigation).
- */
+/** Route map. Pages inside <RequireAuth> render within <AppLayout> (header + navigation). */
 function App() {
   return (
     <BrowserRouter>

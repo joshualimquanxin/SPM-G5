@@ -21,7 +21,7 @@ agent and human on this repo. Read it first; this file deliberately does not rep
   the backend's Pydantic schemas — `frontend/src/api/auth.ts:3` mirrors `UserOut` in
   `backend/app/auth/schemas.py`, and says so in a docstring. Change an API contract and you
   update both sides by hand. The same applies to the permission codes in
-  `backend/app/auth/permissions.py`: the frontend compares them as plain strings, so a renamed
+  `backend/app/auth/permissions.py`: a frontend that gates on them compares plain strings, so a renamed
   code fails silently rather than at compile time.
 - **E2E fixtures are backend seed rows.** The accounts in `tests/e2e/support.ts` are the rows
   in `backend/db/seed/020_sample_data.sql`. Change one, change the other.

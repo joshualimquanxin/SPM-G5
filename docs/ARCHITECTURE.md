@@ -75,8 +75,9 @@ service, next to the record they need - not in the permission matrix.
   goes to the browser in an `HttpOnly`, `SameSite=Lax` cookie.
 - Logout sets `revoked_at`; expired or revoked sessions are refused. Deactivating a user
   (`users.is_active = false`) kills their sessions immediately.
-- `GET /auth/me` returns the user with their permission list, which the frontend uses to hide
-  navigation and actions the role cannot use (story 1.2 AC2). The backend re-checks every call.
+- `POST /auth/login` and `GET /auth/me` return the user with their permission list, so a client
+  can hide navigation and actions the role cannot use (story 1.2 AC2). The backend re-checks every
+  call.
 
 ## Adding a feature (checklist)
 
@@ -86,6 +87,6 @@ service, next to the record they need - not in the permission matrix.
    `app/main.py`; add permissions to `app/auth/permissions.py` if the story introduces new
    functions.
 3. Tests: `backend/tests/<feature>/test_<story>.py` with `@pytest.mark.story(...)` markers.
-4. Frontend: `src/api/<feature>.ts`, `src/<feature>/<Page>.tsx`, a route in `App.tsx` under the
-   matching `RequirePermission`, and a `NAV_ITEMS` entry in `src/layout/AppLayout.tsx`.
+4. Frontend: `src/api/<feature>.ts`, `src/<feature>/<Page>.tsx`, a route in `App.tsx` and a
+   `NAV_ITEMS` entry in `src/layout/AppLayout.tsx`, hiding both from roles without the permission.
 5. E2E: one Playwright spec for the user-visible flow.

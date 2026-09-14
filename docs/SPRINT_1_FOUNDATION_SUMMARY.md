@@ -10,7 +10,7 @@ Everything below is on the branch `story/1-database-schema` (created from `sprin
 | --- | --- | --- | --- |
 | 1 | chore: set up database schema | Done | `backend/db/migrations/001_initial_schema.sql`, `backend/db/seed/*.sql`, `backend/app/dbtool/`, `docs/database/` |
 | 1.1 | fe/be: implement user login and logout | Done | `backend/app/auth/`, `frontend/src/auth/`, `tests/e2e/auth.spec.ts` |
-| 1.2 | fe/be: enforce role-based access control | Done | `backend/app/auth/permissions.py`, `deps.py`, `frontend/src/auth/RequireAuth.tsx`, `layout/AppLayout.tsx` |
+| 1.2 | fe/be: enforce role-based access control | Done (backend only) | `backend/app/auth/permissions.py`, `deps.py` |
 | 8.3 | fe/be: create and update venue records | Done (backend only) | `backend/app/venues/` |
 | 12.1 | fe/be: raise venue booking request | **Skipped - blocked** | see "Story 12.1" below |
 
@@ -21,7 +21,7 @@ tagged with the story and AC it proves. Current state:
 
 | Suite | Result |
 | --- | --- |
-| Backend (pytest, real PostgreSQL) | 115 passed |
+| Backend (pytest, real PostgreSQL) | 132 passed |
 | End-to-end (Playwright) | 6 passed |
 | Backend lint/format (ruff), frontend lint/format/build (oxlint, prettier, tsc), markdownlint | clean |
 
@@ -164,8 +164,8 @@ backend/app/venues/                             models, schemas, service, router
 backend/app/common/audit.py                     audit log helper
 backend/tests/                                  conftest (fixtures + traceability), support/, test_schema, auth/, venues/
 frontend/src/api/{client,auth}.ts               API layer
-frontend/src/auth/                              AuthProvider, context, guards, LoginPage, homeFor
-frontend/src/layout/AppLayout.tsx               header + permission-filtered nav
+frontend/src/auth/                              AuthProvider, context, guard, LoginPage, homeFor
+frontend/src/layout/AppLayout.tsx               header + nav
 frontend/src/pages/HomePage.tsx                 role landing page
 tests/e2e/{support,auth,health}.spec.ts
 .github/workflows/{backend-ci,e2e}.yml          Postgres service, db ready, traceability artifact
